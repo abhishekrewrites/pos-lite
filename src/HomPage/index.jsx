@@ -15,7 +15,7 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="grid grid-cols-4 gap-2">
       {productsData.map((pro) => (
         <Product product={pro} key={pro.id} />
       ))}

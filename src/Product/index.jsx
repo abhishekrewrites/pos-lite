@@ -7,19 +7,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ExpandableText } from "../ExpandableText";
 
 function Product({ product }) {
-  const { name, category, description, thumbnail } = product;
+  const { name, category, description, thumbnail, price } = product;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
+        <img src={thumbnail} className="flex w-full h-[100px] object-contain" />
       </CardHeader>
       <CardContent>
-        <img src={thumbnail} className="flex w-full h-[100px] object-contain" />
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="">{name}</CardTitle>
+        <div className="flex relative gap-2">
+          <IndianRupee className="absolute top-1/2 -translate-y-1/2 h-2 w-2" />
+          <div className="font-medium ml-2">{price}</div>
+        </div>
+        <ExpandableText text={description} lines={1} />
       </CardContent>
       <CardFooter>
         <Button className="w-full">Add to cart</Button>

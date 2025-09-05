@@ -3,7 +3,6 @@ import { store } from "@/core/store";
 import { bus } from "@/lib/eventBus";
 import { seedIfEmpty } from "@/seed/seedDummy";
 import HomePage from "./HomPage/";
-import { NavBar } from "./NavBar/";
 
 export default function App() {
   const [ready, setReady] = useState(false);
