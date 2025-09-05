@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { store } from "@/core/store";
-import Product from "../Product";
+import Product from "../composite-components/Product/";
 
 function HomePage() {
   const [productsData, setProductsData] = useState([]);

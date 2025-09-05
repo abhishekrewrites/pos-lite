@@ -3,7 +3,8 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
-import NavBar from "./NavBar/";
+import NavBar from "./composite-components/NavBar/";
+import Cart from "./Cart";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")).render(
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<App />} />
+            <Route path="/cart" element={<Cart />} />
           </Routes>
         </main>
       </div>

@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { bus } from "@/lib/eventBus";
 import { SearchBar } from "../Search/";
+import { CART_UPDATED } from "../../constants/events";
 
 function NavBar() {
   const [count, setCount] = useState(0);
   useEffect(() => {
-    // const off = bus.on("cart:updated", (s) => setCount(s?.count || 0));
-    // return off;
+    const off = bus.on(CART_UPDATED, (s) => setCount(s?.count || 0));
+    return off;
   }, []);
 
   return (

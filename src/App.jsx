@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { store } from "@/core/store";
+import { cart } from "@/core/CartManager";
 import { bus } from "@/lib/eventBus";
 import { seedIfEmpty } from "@/seed/seedDummy";
 import HomePage from "./HomPage/";
@@ -11,6 +12,7 @@ export default function App() {
     (async () => {
       await store.init();
       await seedIfEmpty({ expandTo1000: true });
+      await cart.init();
       setReady(true);
     })();
   }, []);

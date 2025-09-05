@@ -7,9 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cart } from "@/core/CartManager";
 import { IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ExpandableText } from "../ExpandableText";
+import { ExpandableText } from "../ExpandableText/";
 
 function Product({ product }) {
   const { name, category, description, thumbnail, price } = product;
@@ -28,7 +29,18 @@ function Product({ product }) {
         <ExpandableText text={description} lines={1} />
       </CardContent>
       <CardFooter>
-        <Button className="w-full">Add to cart</Button>
+        <Button
+          className="w-full"
+          onClick={() =>
+            cart.increment({
+              productId: product.id,
+              name: product.name,
+              priceEach: product.price,
+            })
+          }
+        >
+          Add to cart
+        </Button>
       </CardFooter>
     </Card>
   );
