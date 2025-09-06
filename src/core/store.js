@@ -1,4 +1,3 @@
-// src/core/store.js
 import { getDB, runTx } from "./idb";
 import { bus } from "@/lib/eventBus";
 
@@ -10,7 +9,7 @@ class Store {
   }
 
   async init() {
-    this.db = await getDB(); // <- centralized
+    this.db = await getDB();
   }
 
   async upsertProducts(products) {

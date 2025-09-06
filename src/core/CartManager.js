@@ -1,6 +1,6 @@
-// src/core/cart.js
 import { getDB, runTx } from "./idb";
 import { bus } from "@/lib/eventBus";
+import { CART_UPDATED } from "@/constants/events";
 
 const CART_KEY = "current";
 
@@ -17,10 +17,10 @@ class CartManager {
   }
 
   async init() {
-    this.db = await getDB(); // <- same connection/schema
+    this.db = await getDB();
     await this._rehydrate();
     this.ready = true;
-    bus.emit("cart:updated", this.snapshot());
+    bus.emit(CART_UPDATED, this.snapshot());
   }
 
   snapshot() {
@@ -71,7 +71,7 @@ class CartManager {
     await runTx(this.db, ["cart"], "readwrite", (t) =>
       t.objectStore("cart").put(payload)
     );
-    bus.emit("cart:updated", this.snapshot());
+    bus.emit(CART_UPDATED, this.snapshot());
   }
 
   async increment({ productId, name, priceEach, addOns, notes }) {

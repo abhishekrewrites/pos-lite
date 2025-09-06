@@ -4,6 +4,7 @@ import { cart } from "@/core/CartManager";
 import { bus } from "@/lib/eventBus";
 import { seedIfEmpty } from "@/seed/seedDummy";
 import HomePage from "./HomPage/";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -22,6 +23,7 @@ export default function App() {
   return (
     <div className="p-2">
       <HomePage />
+      <Toaster richColors />
     </div>
   );
 }
