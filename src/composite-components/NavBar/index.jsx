@@ -22,7 +22,7 @@ function NavBar() {
         </Link>
         <SearchBar onChange={(e) => {}} />
         <Link to="/cart" className="relative">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="cursor-pointer">
             <ShoppingCart className="h-5 w-5" />
           </Button>
           {count > 0 && (

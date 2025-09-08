@@ -5,6 +5,7 @@ import { bus } from "@/lib/eventBus";
 import { seedIfEmpty } from "@/seed/seedDummy";
 import HomePage from "./HomPage/";
 import { Toaster } from "@/components/ui/sonner";
+import { Spinner } from "@/composite-components/Spinner/";
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -18,7 +19,7 @@ export default function App() {
     })();
   }, []);
 
-  if (!ready) return <div className="p-6">Booting local DB…</div>;
+  if (!ready) return <Spinner size={72} />;
 
   return (
     <div className="p-2">
