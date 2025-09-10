@@ -1,45 +1,50 @@
 import { store } from "@/core/store";
 
-async function fetchDummy(limit = 100) {
-  const res = await fetch(`https://dummyjson.com/products?limit=${limit}`);
-  if (!res.ok) throw new Error("DummyJSON fetch failed");
-  const { products } = await res.json();
-  return products.map((p) => ({
-    id: `p${p.id}`,
-    name: p.title,
-    description: p.description,
-    name_lc: p.title.toLowerCase(),
-    category: p.category,
-    price: Math.round(p.price * 100),
-    tags: p.tags || [],
+// ✅ Simplified: Cleaner async flow, extracted transformation
+async function fetchDummyProducts(limit = 100) {
+  const response = await fetch(`https://dummyjson.com/products?limit=${limit}`);
+  if (!response.ok) throw new Error("Failed to fetch dummy data");
+
+  const { products } = await response.json();
+  return products.map(transformProduct);
+}
+
+// ✅ Extracted: Clear data transformation
+function transformProduct(product) {
+  return {
+    id: `p${product.id}`,
+    name: product.title,
+    description: product.description,
+    name_lc: product.title.toLowerCase(),
+    category: product.category,
+    price: Math.round(product.price * 100),
+    tags: product.tags || [],
     updatedAt: Date.now(),
     lamport: 1,
     lastWriter: "seed",
-    thumbnail: p.thumbnail,
-  }));
+    thumbnail: product.thumbnail,
+  };
 }
 
-function expand(products, times = 10) {
-  const out = [];
-  for (let i = 0; i < times; i++) {
-    for (const p of products) {
-      out.push({
-        ...p,
-        id: `${p.id}-${i}`,
-        name: `${p.name}`,
-        name_lc: `${p.name_lc}`,
-      });
-    }
-  }
-  return out;
+// ✅ Simplified: Cleaner expansion logic
+function expandProducts(products, multiplier = 10) {
+  return products.flatMap((product) =>
+    Array.from({ length: multiplier }, (_, index) => ({
+      ...product,
+      id: `${product.id}-${index}`,
+    }))
+  );
 }
 
 export async function seedIfEmpty({ expandTo1000 = false } = {}) {
   const hasData = await store.hasAnyProduct();
   if (hasData) return;
 
-  const base = await fetchDummy(100);
-  const data = expandTo1000 ? expand(base, 10) : base;
-  await store.upsertProducts(data);
-  console.log(`Seeded ${data.length} products into IndexedDB`);
+  const baseProducts = await fetchDummyProducts(100);
+  const finalProducts = expandTo1000
+    ? expandProducts(baseProducts, 10)
+    : baseProducts;
+
+  await store.upsertProducts(finalProducts);
+  console.log(`✅ Seeded ${finalProducts.length} products into IndexedDB`);
 }

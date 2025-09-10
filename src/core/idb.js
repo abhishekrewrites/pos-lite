@@ -5,49 +5,61 @@ let dbPromise;
 
 export function getDB() {
   if (dbPromise) return dbPromise;
+
   dbPromise = new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = () => {
-      const db = req.result;
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-      if (!db.objectStoreNames.contains("products")) {
-        const s = db.createObjectStore("products", { keyPath: "id" });
-        s.createIndex("category", "category");
-        s.createIndex("name_lc", "name_lc");
-        s.createIndex("price", "price");
-        s.createIndex("updatedAt", "updatedAt");
-      }
+    request.onupgradeneeded = () => {
+      const db = request.result;
 
-      if (!db.objectStoreNames.contains("meta")) {
-        db.createObjectStore("meta", { keyPath: "key" });
-      }
+      // ✅ Simplified: Extract store creation logic
+      createStoreIfNeeded(db, "products", { keyPath: "id" }, [
+        "category",
+        "name_lc",
+        "price",
+        "updatedAt",
+      ]);
 
-      if (!db.objectStoreNames.contains("cart")) {
-        db.createObjectStore("cart", { keyPath: "key" });
-      }
+      createStoreIfNeeded(db, "meta", { keyPath: "key" });
+      createStoreIfNeeded(db, "cart", { keyPath: "key" });
     };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
   });
+
   return dbPromise;
 }
 
+// ✅ Simplified: Better error handling, cleaner promise chain
 export function runTx(db, stores, mode, fn) {
   return new Promise((resolve, reject) => {
-    const t = db.transaction(stores, mode);
-    Promise.resolve(fn(t)).then(
-      (val) => (t.oncomplete = () => resolve(val)),
-      reject
-    );
-    t.onerror = () => reject(t.error);
-    t.onabort = () => reject(t.error);
+    const transaction = db.transaction(stores, mode);
+
+    transaction.onerror = () => reject(transaction.error);
+    transaction.onabort = () => reject(new Error("Transaction aborted"));
+
+    Promise.resolve(fn(transaction))
+      .then((result) => {
+        transaction.oncomplete = () => resolve(result);
+      })
+      .catch(reject);
   });
 }
 
+// ✅ Simplified: Direct promise wrapper
 export function getAll(store) {
   return new Promise((resolve, reject) => {
-    const req = store.getAll();
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
   });
+}
+
+// ✅ Helper: Extracted store creation logic
+function createStoreIfNeeded(db, storeName, options, indexes = []) {
+  if (!db.objectStoreNames.contains(storeName)) {
+    const store = db.createObjectStore(storeName, options);
+    indexes.forEach((indexName) => store.createIndex(indexName, indexName));
+  }
 }
