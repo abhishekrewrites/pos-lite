@@ -1,5 +1,5 @@
 const DB_NAME = "POS_DB";
-const DB_VERSION = 2;
+const DB_VERSION = 5;
 
 let dbPromise;
 

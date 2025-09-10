@@ -8,19 +8,46 @@ import { CART_UPDATED } from "../../constants/events";
 
 function NavBar() {
   const [count, setCount] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
+
   useEffect(() => {
     const off = bus.on(CART_UPDATED, (s) => setCount(s?.count || 0));
     return off;
   }, []);
 
+  const handleSearchChange = (value) => {
+    setSearchValue(value);
+    // Emit search event with debounced search
+    clearTimeout(handleSearchChange.timeoutId);
+    handleSearchChange.timeoutId = setTimeout(() => {
+      bus.emit("search:changed", { query: value });
+    }, 300); // 300ms debounce
+  };
+
+  const handleLogoClick = () => {
+    // Clear search when clicking on logo
+    if (searchValue) {
+      setSearchValue("");
+      bus.emit("search:changed", { query: "" });
+    }
+  };
+
   return (
     <header className="border-b">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2">
+        <Link
+          to="/"
+          className="flex items-center gap-2"
+          onClick={handleLogoClick}
+        >
           <Store className="h-5 w-5" />
           <span className="font-semibold">POS Lite</span>
         </Link>
-        <SearchBar onChange={(e) => {}} />
+        <SearchBar
+          value={searchValue}
+          onChange={handleSearchChange}
+          placeholder="Search products..."
+        />
         <Link to="/cart" className="relative">
           <Button variant="ghost" size="icon" className="cursor-pointer">
             <ShoppingCart className="h-5 w-5" />
