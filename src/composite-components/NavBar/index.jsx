@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Search, ShoppingCart, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { cart } from "@/core/CartManager";
 import { bus } from "@/lib/eventBus";
 import { SearchBar } from "../Search/";
 import { CART_UPDATED } from "../../constants/events";
@@ -11,21 +12,27 @@ function NavBar() {
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    const off = bus.on(CART_UPDATED, (s) => setCount(s?.count || 0));
+    console.log("🎧 Setting up cart listener...");
+    const initialCount = cart.snapshot().count;
+    console.log("📊 Initial cart count:", initialCount);
+    setCount(initialCount);
+
+    const off = bus.on(CART_UPDATED, (s) => {
+      setCount(s?.count || 0);
+    });
+
     return off;
   }, []);
 
   const handleSearchChange = (value) => {
     setSearchValue(value);
-    // Emit search event with debounced search
     clearTimeout(handleSearchChange.timeoutId);
     handleSearchChange.timeoutId = setTimeout(() => {
       bus.emit("search:changed", { query: value });
-    }, 300); // 300ms debounce
+    }, 300);
   };
 
   const handleLogoClick = () => {
-    // Clear search when clicking on logo
     if (searchValue) {
       setSearchValue("");
       bus.emit("search:changed", { query: "" });
