@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Search, ShoppingCart, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -10,6 +10,9 @@ import { CART_UPDATED } from "../../constants/events";
 function NavBar() {
   const [count, setCount] = useState(0);
   const [searchValue, setSearchValue] = useState("");
+  const { pathname } = useLocation();
+
+  const hideSearch = pathname === "/cart";
 
   useEffect(() => {
     console.log("🎧 Setting up cart listener...");
@@ -40,7 +43,7 @@ function NavBar() {
   };
 
   return (
-    <header className="border-b">
+    <header className="border-b sticky top-0 bg-white">
       <div className="container mx-auto flex h-14 items-center justify-between px-4">
         <Link
           to="/"
@@ -50,11 +53,14 @@ function NavBar() {
           <Store className="h-5 w-5" />
           <span className="font-semibold hidden lg:block">POS Lite</span>
         </Link>
-        <SearchBar
-          value={searchValue}
-          onChange={handleSearchChange}
-          placeholder="Search products..."
-        />
+        {!hideSearch && (
+          <SearchBar
+            value={searchValue}
+            onChange={handleSearchChange}
+            placeholder="Search products..."
+          />
+        )}
+
         <Link to="/cart" className="relative">
           <Button variant="ghost" size="icon" className="cursor-pointer">
             <ShoppingCart className="h-5 w-5" />

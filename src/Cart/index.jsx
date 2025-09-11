@@ -1,4 +1,3 @@
-// src/pages/CartPage.jsx - Updated with working Place Order functionality
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { bus } from "@/lib/eventBus";
@@ -7,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CartProduct } from "./CartProduct/";
-import { toast } from "sonner"; // ✅ Add toast for notifications
-import { Loader2 } from "lucide-react"; // ✅ Add loading icon
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const fmt = (paisa) => `₹ ${(paisa / 100).toFixed(2)}`;
 
 export default function CartPage() {
   const [state, setState] = useState(cart.snapshot());
-  const [isLoading, setIsLoading] = useState(false); // ✅ Loading state
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,12 +21,10 @@ export default function CartPage() {
       setState(newState);
     });
 
-    // Load initial cart state
     setState(cart.snapshot());
     return off;
   }, []);
 
-  // ✅ FIXED: Complete Place Order implementation
   const handlePlaceOrder = async () => {
     if (!state.lines.length) {
       toast.error("Cart is empty!");
@@ -39,13 +36,11 @@ export default function CartPage() {
     try {
       console.log("🛒 Starting checkout process...");
 
-      // ✅ Simple customer and payment info for quick checkout
-      // In a real app, you'd collect this from a form
       const customerInfo = {
         name: "Walk-in Customer",
         email: "",
         phone: "",
-        table: Math.floor(Math.random() * 20) + 1, // Random table 1-20
+        table: Math.floor(Math.random() * 20) + 1,
         orderType: "dine-in",
         cashier: "POS System",
       };
@@ -57,29 +52,21 @@ export default function CartPage() {
         change: 0,
       };
 
-      // ✅ Call cart.checkout() - this triggers the entire workflow:
-      // 1. Save order locally
-      // 2. Call dummyApiPost('/api/orders/place')
-      // 3. On API success → trigger printScheduler
-      // 4. Clear cart
       const order = await cart.checkout(customerInfo, paymentInfo);
 
       console.log("✅ Order placed successfully:", order.order.id);
 
-      // ✅ Show success notification
       toast.success(`Order #${order.order.id} placed successfully!`, {
         description: `Table ${customerInfo.table} • Receipt is printing...`,
         duration: 5000,
       });
 
-      // ✅ Navigate back to home after success
       setTimeout(() => {
         navigate("/");
-      }, 2000); // Give time to see the success message
+      }, 2000);
     } catch (error) {
       console.error("❌ Checkout failed:", error.message);
 
-      // ✅ Show error notification
       toast.error("Order placement failed!", {
         description: error.message,
         duration: 5000,
@@ -89,7 +76,6 @@ export default function CartPage() {
     }
   };
 
-  // ✅ Handle clear cart with confirmation
   const handleClearCart = async () => {
     if (!state.lines.length) return;
 
@@ -143,7 +129,6 @@ export default function CartPage() {
             <>
               <Separator />
 
-              {/* ✅ Enhanced totals section */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
@@ -162,7 +147,6 @@ export default function CartPage() {
                 </div>
               </div>
 
-              {/* ✅ Enhanced action buttons */}
               <div className="flex justify-end gap-2 pt-4">
                 <Button
                   variant="outline"
@@ -190,7 +174,6 @@ export default function CartPage() {
                 </Button>
               </div>
 
-              {/* ✅ Order processing indicator */}
               {isLoading && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
                   <div className="flex items-center gap-2 text-blue-800">
