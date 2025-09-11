@@ -407,6 +407,14 @@ class CartManager {
     }
   }
 
+  async remove(productId) {
+    if (!this.lines.has(productId)) return;
+
+    this.lines.delete(productId);
+    this._updateTotals();
+    await this._saveAndEmit(); // persist + notify UI
+  }
+
   // ✅ Public API methods
   getSyncStatus() {
     return {
