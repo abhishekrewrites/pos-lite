@@ -28,7 +28,7 @@ function HomePage() {
         });
 
         if (p === 0) {
-          setItems(resp); // Reset for new search or initial load
+          setItems(resp);
         } else {
           setItems((prev) => [...prev, ...resp]);
         }
@@ -46,7 +46,6 @@ function HomePage() {
     [hasMore, searchQuery]
   );
 
-  // Handle search changes
   useEffect(() => {
     const off = bus.on("search:changed", ({ query }) => {
       setSearchQuery(query);
@@ -58,12 +57,10 @@ function HomePage() {
     return off;
   }, [fetchPage]);
 
-  // Initial load
   useEffect(() => {
     fetchPage(0);
   }, [fetchPage]);
 
-  // Infinite scroll
   useEffect(() => {
     if (!hasMore) return;
     const node = sentinelRef.current;
@@ -88,7 +85,7 @@ function HomePage() {
   }, [page, loading, hasMore, fetchPage]);
 
   return (
-    <div className="p-3">
+    <div className="container max-w-screen-2xl mx-auto p-3 sm:p-4 md:p-6 lg:p-8">
       {searchQuery && (
         <div className="mb-4 text-sm text-muted-foreground">
           {items.length > 0
@@ -99,7 +96,17 @@ function HomePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div
+        className="grid 
+        grid-cols-2           /* Mobile: 2 columns */
+        sm:grid-cols-2        /* Small tablets: 3 columns */  
+        md:grid-cols-3        /* Medium tablets: 4 columns */
+        lg:grid-cols-3        /* Large screens: 5 columns */
+        xl:grid-cols-4        /* Extra large: 6 columns */
+        2xl:grid-cols-4       /* Ultra wide: 7 columns */
+        gap-3 sm:gap-4        /* Responsive gap */
+      "
+      >
         {items.map((pro) => (
           <Product product={pro} key={pro.id} />
         ))}
@@ -107,7 +114,11 @@ function HomePage() {
 
       {hasMore && <div ref={sentinelRef} className="h-10" />}
 
-      {loading && <Spinner />}
+      {loading && (
+        <div className="flex justify-center py-8">
+          <Spinner />
+        </div>
+      )}
 
       {!hasMore && (
         <div className="py-4 text-center text-sm text-muted-foreground">
