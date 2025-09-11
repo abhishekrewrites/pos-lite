@@ -48,7 +48,7 @@ function NavBar() {
           onClick={handleLogoClick}
         >
           <Store className="h-5 w-5" />
-          <span className="font-semibold">POS Lite</span>
+          <span className="font-semibold hidden lg:block">POS Lite</span>
         </Link>
         <SearchBar
           value={searchValue}
