@@ -1,15 +1,14 @@
 import { store } from "@/core/store";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-// ✅ Simplified: Cleaner async flow, extracted transformation
 async function fetchDummyProducts(limit = 100) {
-  const response = await fetch(`https://dummyjson.com/products?limit=${limit}`);
+  const response = await fetch(`${apiUrl}products?limit=${limit}`);
   if (!response.ok) throw new Error("Failed to fetch dummy data");
 
   const { products } = await response.json();
   return products.map(transformProduct);
 }
 
-// ✅ Extracted: Clear data transformation
 function transformProduct(product) {
   return {
     id: `p${product.id}`,
@@ -26,7 +25,6 @@ function transformProduct(product) {
   };
 }
 
-// ✅ Simplified: Cleaner expansion logic
 function expandProducts(products, multiplier = 10) {
   return products.flatMap((product) =>
     Array.from({ length: multiplier }, (_, index) => ({
