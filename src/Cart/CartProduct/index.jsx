@@ -90,27 +90,30 @@ export function CartProduct({ l, fmt, lineTotal }) {
             <Plus className="h-3 w-3" aria-hidden="true" />
             <span className="sr-only">Increase</span>
           </Button>
+          <div>
+            <Button
+              size="sm"
+              variant="destructive"
+              className="sm:w-auto hover:text-red-700 hover:bg-red-50"
+              onClick={() => cart.remove(l.productId)}
+              aria-label={`Remove ${l.name || l.productId} from cart`}
+            >
+              <X className="h-3 w-3 mr-1 sm:hidden" aria-hidden="true" />
+              Remove
+            </Button>
+          </div>
         </div>
 
-        <Button
-          size="sm"
-          variant="ghost"
-          className="sm:w-auto w-full text-red-600 hover:text-red-700 hover:bg-red-50"
-          onClick={() => cart.remove(l.productId)}
-          aria-label={`Remove ${l.name || l.productId} from cart`}
-        >
-          <X className="h-3 w-3 mr-1 sm:hidden" aria-hidden="true" />
-          Remove
-        </Button>
-
-        <div
-          className="sm:w-24 sm:text-right font-medium"
-          role="status"
-          aria-label={`Line total for ${l.name || l.productId}: ${fmt(
-            lineTotal
-          )}`}
-        >
-          <span aria-hidden="true">{fmt(lineTotal)}</span>
+        <div>
+          <div
+            className="sm:w-24 sm:text-right font-medium"
+            role="status"
+            aria-label={`Line total for ${l.name || l.productId}: ${fmt(
+              lineTotal
+            )}`}
+          >
+            <span aria-hidden="true">{fmt(lineTotal)}</span>
+          </div>
         </div>
       </div>
 
